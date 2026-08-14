@@ -33,7 +33,4 @@ public class Category {
 
     @Column(precision = 12, scale = 2)
     private BigDecimal budget;
-
-    @Column(precision = 12, scale = 2)
-    private BigDecimal spent;
 }

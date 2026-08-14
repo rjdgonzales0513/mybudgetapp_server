@@ -15,7 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.rjdg.mybudget.dto.CategoryRequest;
 import com.rjdg.mybudget.dto.MonthlyReport;
-import com.rjdg.mybudget.dto.TransactionRequest;
 import com.rjdg.mybudget.dto.UpdateCategoryRequest;
 import com.rjdg.mybudget.model.Category;
 import com.rjdg.mybudget.model.Transaction;
@@ -45,7 +44,7 @@ public class BudgetService {
         }
 
         Category category = new Category(request.id(), request.name(), request.icon(), request.color(),
-                request.budget(), BigDecimal.ZERO);
+                request.budget());
 
         categoryRepository.save(category);
 
@@ -78,32 +77,6 @@ public class BudgetService {
         categoryRepository.deleteById(categoryId);
     }
 
-    public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAllByOrderByDateDescIdDesc();
-    }
-
-    // Creates a transaction AND rolls its amount into the category's
-    // running "spent" total, so the frontend can render both from one
-    // pair of GET calls without doing the math itself.
-    public Transaction addTransaction(TransactionRequest request) {
-        Category category = categoryRepository.findById(request.categoryId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "No category with id " + request.categoryId()));
-
-        Transaction transaction = new Transaction();
-        transaction.setDate(request.date());
-        transaction.setDescription(request.description());
-        transaction.setAmount(request.amount());
-        transaction.setCategory(category);
-
-        Transaction saved = transactionRepository.save(transaction);
-
-        category.setSpent(category.getSpent().add(request.amount()));
-        categoryRepository.save(category);
-
-        return saved;
-    }
-
     public List<String> getAvailableMonths() {
         return transactionRepository.findAll().stream()
                 .map(t -> YearMonth.from(t.getDate()))
@@ -121,7 +94,10 @@ public class BudgetService {
         BigDecimal totalSpent = BigDecimal.ZERO;
 
         for (Transaction tx : transactions) {
-            totalSpent = totalSpent.add(tx.getAmount());
+            if (tx.getType().equalsIgnoreCase("EXPENSE")) {
+                totalSpent = totalSpent.add(tx.getAmount());
+            }
+            
             Category cat = tx.getCategory();
             if (cat == null)
                 continue;

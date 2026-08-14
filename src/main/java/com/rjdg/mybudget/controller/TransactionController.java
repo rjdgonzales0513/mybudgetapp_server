@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rjdg.mybudget.dto.TransactionRequest;
 import com.rjdg.mybudget.model.Transaction;
-import com.rjdg.mybudget.service.BudgetService;
+import com.rjdg.mybudget.service.TransactionService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -23,17 +24,22 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class TransactionController {
 
-	private final BudgetService budgetService;
+	private final TransactionService transactionService;
 
 	@GetMapping
 	public List<Transaction> getTransactions() {
-		return budgetService.getAllTransactions();
+		return transactionService.getAllTransactions();
 	}
 
 	@PostMapping
 	public ResponseEntity<Transaction> addTransaction(@Valid @RequestBody TransactionRequest request) {
-		Transaction saved = budgetService.addTransaction(request);
+		Transaction saved = transactionService.addTransaction(request);
 		return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+	}
+
+	@GetMapping("/{accountId}")
+	public List<Transaction> getAccountTransactions(@PathVariable String accountId) {
+		return transactionService.getAllAccountTransaction(accountId);
 	}
 
 }

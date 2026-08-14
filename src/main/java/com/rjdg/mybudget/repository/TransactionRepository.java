@@ -12,5 +12,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     boolean existsByCategory_Id(String categoryId);
 
-     List<Transaction> findByDateBetweenOrderByDateDesc(LocalDate start, LocalDate end);
+    List<Transaction> findByDateBetweenOrderByDateDesc(LocalDate start, LocalDate end);
+
+    List<Transaction> findByAccount_Id(String accountId);
+
+     List<Transaction> findByAccount_IdOrderByDateDesc(String accountId);
 }

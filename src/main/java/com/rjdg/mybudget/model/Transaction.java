@@ -32,9 +32,16 @@ public class Transaction {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "type")
+    private String type;
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     @Column(precision = 12, scale = 2)
     private BigDecimal amount;
