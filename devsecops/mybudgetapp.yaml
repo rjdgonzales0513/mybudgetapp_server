@@ -20,7 +20,7 @@ spec:
         - name: gitlab-registry-secret
       containers:
         - name: backend
-          image: registry.gitlab.com/mybudgetapp1/mybudgetapp_server/backend:latest
+          image: registry.gitlab.com/mybudgetapp1/mybudgetapp_server/mybudgetapp_server:latest
           ports:
             - containerPort: 8081
 
