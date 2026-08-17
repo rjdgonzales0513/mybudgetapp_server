@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: backend }
+  template:
+    metadata:
+      labels: { app: backend }
+    spec:
+      imagePullSecrets:
+        - name: gitlab-registry-secret
+      containers:
+        - name: backend
+          image: registry.gitlab.com/mybudgetapp1/mybudgetapp_server/backend:latest
+          ports: [{ containerPort: 8081 }]
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://mybudgetappdb.cjeok2u2en2i.us-east-2.rds.amazonaws.com:5432/mybudgetapp
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+          resources:
+            requests: { memory: "256Mi", cpu: "100m" }
+            limits: { memory: "384Mi", cpu: "300m" }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-svc
+spec:
+  selector: { app: backend }
+  ports: [{ port: 8081, targetPort: 8081 }]
