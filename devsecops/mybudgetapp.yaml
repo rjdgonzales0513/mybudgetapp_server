@@ -16,6 +16,8 @@ spec:
         app: backend
 
     spec:
+      imagePullSecrets:
+        - name: gitlab-registry-secret
       containers:
         - name: backend
           image: registry.gitlab.com/mybudgetapp1/mybudgetapp_server/backend:latest
