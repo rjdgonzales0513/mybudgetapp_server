@@ -4,7 +4,7 @@ metadata:
   name: backend
   namespace: mybudgetapp
 spec:
-  replicas: 2
+  replicas: 1
 
   selector:
     matchLabels:
@@ -18,8 +18,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: mybudgetappserver:latest
-
+          image: registry.gitlab.com/mybudgetapp1/mybudgetapp_server/backend:latest
           ports:
             - containerPort: 8081
 
