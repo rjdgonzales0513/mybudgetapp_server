@@ -24,5 +24,8 @@ RUN mvn clean package
 # Runtime stage
 FROM openjdk:21-ea-21-jdk-slim
 WORKDIR /app
-COPY --from=builder /build/target/demo-0.0.1-SNAPSHOT.jar app.jar
-CMD ["java","-jar","app.jar"]
+COPY --from=builder /build/target/*.jar app.jar
+
+EXPOSE 8081
+
+ENTRYPOINT ["java","-jar","app.jar"]

@@ -1,19 +1,27 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: myjavaapp-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: mybudgetapp-ingress
+  namespace: mybudgetapp
 spec:
   ingressClassName: nginx
   rules:
-  - host: myjavaapp.local
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: myjavaapp
-            port:
-              number: 8080
+    - host: mybudgetapp.local
+      http:
+        paths:
+
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8081
+
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
