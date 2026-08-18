@@ -29,6 +29,6 @@ deploy-backend:
     - echo "EC2_HOST=$EC2_HOST"
     - ssh-keyscan -v -H "$EC2_HOST" >> ~/.ssh/known_hosts
   script:
-    - ssh ubuntu@$EC2_HOST "kubectl set image deployment/backend backend=$CI_REGISTRY_IMAGE/mybudgetapp_server:latest && kubectl set image deployment/frontend frontend=$CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHORT_SHA"
+    - ssh ubuntu@$EC2_HOST "kubectl set image deployment/backend backend=$CI_REGISTRY_IMAGE/mybudgetapp_server:latest"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
