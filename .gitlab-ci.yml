@@ -26,11 +26,7 @@ deploy-backend:
     - echo "$DEPLOY_SSH_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
-    - ssh ubuntu@$EC2_HOST "mkdir -p ~/.kube"
-    - ssh ubuntu@$EC2_HOST "sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config"
-    - ssh ubuntu@$EC2_HOST ""sudo chown ubuntu:ubuntu ~/.kube/config"
-    - ssh ubuntu@$EC2_HOST "chmod 600 ~/.kube/config"
   script:
-    - ssh ubuntu@$EC2_HOST "kubectl set image deployment/backend backend=$CI_REGISTRY_IMAGE/mybudgetapp_server:latest"
+    - ssh ubuntu@$EC2_HOST "kubectl --kubeconfig=/home/ubuntu/.kube/config set image deployment/backend backend=$CI_REGISTRY_IMAGE/mybudgetapp_server:latest"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
