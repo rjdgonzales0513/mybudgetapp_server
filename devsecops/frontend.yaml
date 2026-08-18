@@ -4,7 +4,7 @@ metadata:
   name: frontend
   namespace: mybudgetapp
 spec:
-  replicas: 2
+  replicas: 1
 
   selector:
     matchLabels:
@@ -16,9 +16,11 @@ spec:
         app: frontend
 
     spec:
+      imagePullSecrets:
+        - name: gitlab-registry-frontend-secret
       containers:
         - name: frontend
-          image: mybudgetappfrontend:latest
+          image: registry.gitlab.com/mybudgetapp1/mybudgetapp_client/mybudgetapp_client:latest
 
           ports:
             - containerPort: 80
