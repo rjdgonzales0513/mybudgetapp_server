@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: frontend-config
 data:
-  API_URL: "https://api.example.com"
+  API_URL: "http://ec2-52-14-12-158.us-east-2.compute.amazonaws.com"
