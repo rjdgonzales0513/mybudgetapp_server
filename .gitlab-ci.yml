@@ -28,6 +28,10 @@ deploy-backend:
     - chmod 700 ~/.ssh
     - echo "EC2_HOST=$EC2_HOST"
     - ssh-keyscan -v -H "$EC2_HOST" >> ~/.ssh/known_hosts
+    - mkdir -p ~/.kube
+    - sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+    - sudo chown ubuntu:ubuntu ~/.kube/config
+    - chmod 600 ~/.kube/config
   script:
     - ssh ubuntu@$EC2_HOST "kubectl set image deployment/backend backend=$CI_REGISTRY_IMAGE/mybudgetapp_server:latest"
   rules:
