@@ -24,15 +24,8 @@ deploy-backend:
     - apk add --no-cache openssh-client
     - eval $(ssh-agent -s)
     - echo "$DEPLOY_SSH_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "EC2_HOST=$EC2_HOST"
-    - ssh-keyscan -v -H "$EC2_HOST" >> ~/.ssh/known_hosts
-    - ls -la ~/.kube/config
-    - mkdir -p ~/.kube
-    - sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
-    - sudo chown ubuntu:ubuntu ~/.kube/config
-    - chmod 600 ~/.kube/config
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
   script:
     - ssh ubuntu@$EC2_HOST "kubectl set image deployment/backend backend=$CI_REGISTRY_IMAGE/mybudgetapp_server:latest"
   rules:
