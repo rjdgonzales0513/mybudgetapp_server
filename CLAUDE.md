@@ -19,7 +19,7 @@ docker build -t mybudgetappserver .    # image name expected by docker-compose.y
 docker compose up                      # postgres + backend + frontend (frontend image built from the other repo)
 ```
 
-There is currently no `src/test` directory; `spring-boot-starter-test` is on the classpath for when tests are added. No linter/formatter is configured.
+Tests need no database: services are tested with Mockito, and controllers with `@WebMvcTest` + `@Import(SecurityConfig.class)`. Use `@MockitoBean`, not the deprecated `@MockBean`. GitHub Actions (`.github/workflows/ci.yml`) runs `./mvnw verify` on PRs and pushes to `main`. No linter/formatter is configured.
 
 Local DB credentials are in `src/main/resources/application.properties`; containers override them with `SPRING_DATASOURCE_URL` / `_USERNAME` / `_PASSWORD` env vars.
 

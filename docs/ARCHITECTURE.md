@@ -112,8 +112,16 @@ The report loads every transaction between the first and last day of the month a
 
 The `jjwt` libraries are already dependencies in preparation for JWT login, but nothing uses them yet.
 
+## Tests
+
+Tests live in `src/test/java` and need no database:
+
+- **Service tests** (`service/*Test`) use plain JUnit 5 + Mockito with mocked repositories. They cover the transaction balance rules, report aggregation, category CRUD conflicts and PDF rendering.
+- **Controller tests** (`controller/*Test`) are `@WebMvcTest` slices with `@MockitoBean` services. They import `SecurityConfig`, so they also check routing, `@Valid` request validation, status codes and CORS.
+
+Repository queries and Flyway migrations are not covered, since that would need a real Postgres (e.g. Testcontainers).
+
 ## Known limitations
 
 - **Create endpoints return 202 Accepted.** Accounts and categories return 202 where 201 Created would be the right status.
 - **`getAvailableMonths` loads every transaction** into memory to find the distinct months.
-- **No tests yet.**

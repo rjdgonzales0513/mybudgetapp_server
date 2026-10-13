@@ -28,6 +28,10 @@ docker run -p 8081:8081 \
 
 Compose doesn't build the backend or frontend images, so build them first. Postgres data is kept in the `postgres-data` volume.
 
+## CI (GitHub Actions)
+
+`.github/workflows/ci.yml` runs `./mvnw verify` (compile + all tests) on JDK 21 for every pull request and every push to `main`. If tests fail, it uploads the surefire reports as a build artifact. To block merges on failing tests, make the `Build & test` check required in the branch protection rules.
+
 ## CI/CD (GitLab)
 
 `.gitlab-ci.yml` runs on every push to `main`:
