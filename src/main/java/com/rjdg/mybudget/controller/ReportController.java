@@ -2,6 +2,7 @@ package com.rjdg.mybudget.controller;
 
 import java.io.IOException;
 import java.time.YearMonth;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import org.springframework.http.HttpHeaders;
@@ -35,13 +36,13 @@ public class ReportController {
     // e.g. /api/reports/monthly?month=2026-08
     @GetMapping("/monthly")
     public MonthlyReport getMonthlyReport(@RequestParam String month) {
-        return budgetService.getMonthlyReport(YearMonth.parse(month));
+        return budgetService.getMonthlyReport(parseMonth(month));
     }
 
     // e.g. /api/reports/monthly/pdf?month=2026-08
     @GetMapping(value = "/monthly/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> getMonthlyReportPdf(@RequestParam String month) {
-        MonthlyReport report = budgetService.getMonthlyReport(YearMonth.parse(month));
+        MonthlyReport report = budgetService.getMonthlyReport(parseMonth(month));
         byte[] pdf;
         try {
             pdf = pdfStatementGenerator.generate(report);
@@ -54,5 +55,14 @@ public class ReportController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf);
+    }
+
+    private YearMonth parseMonth(String month) {
+        try {
+            return YearMonth.parse(month);
+        } catch (DateTimeParseException e) {
+            throw new ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "month must be in YYYY-MM format", e);
+        }
     }
 }

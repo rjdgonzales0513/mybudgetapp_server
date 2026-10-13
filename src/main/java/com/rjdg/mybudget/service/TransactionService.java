@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.rjdg.mybudget.dto.TransactionRequest;
@@ -36,6 +37,7 @@ public class TransactionService {
         return transactionRepository.findAllByOrderByDateDescIdDesc();
     }
 
+    @Transactional
     public Transaction addTransaction(TransactionRequest request) {
 
         Account account = validateAccount(request.accountId());
@@ -46,31 +48,36 @@ public class TransactionService {
         transaction.setDescription(request.description());
         transaction.setAmount(request.amount());
 
-        if (request.amount().compareTo(balance) <= 0 && request.type().equalsIgnoreCase(EXPENSE)) {
-            account.setBalance(balance.subtract(request.amount()));
-            accountRepository.save(account);
+        if (request.type().equalsIgnoreCase(EXPENSE)) {
+            if (request.categoryId() == null || request.categoryId().isBlank()) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "categoryId is required for an expense");
+            }
             Category category = categoryRepository.findById(request.categoryId())
                     .orElseThrow(() -> new ResponseStatusException(
                             HttpStatus.NOT_FOUND, "No category with id " + request.categoryId()));
+            if (request.amount().compareTo(balance) > 0) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Insufficient balance");
+            }
+
+            account.setBalance(balance.subtract(request.amount()));
+            accountRepository.save(account);
+
             transaction.setType(EXPENSE);
             transaction.setCategory(category);
             transaction.setAccount(account);
-
-            Transaction saved = transactionRepository.save(transaction);
-
-            categoryRepository.save(category);
-
-            return saved;
+            return transactionRepository.save(transaction);
         } else if (request.type().equalsIgnoreCase(INCOME)) {
             account.setBalance(balance.add(request.amount()));
             accountRepository.save(account);
-            
+
             transaction.setType(INCOME);
             transaction.setAccount(account);
             return transactionRepository.save(transaction);
         } else {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Insufficient balance");
+                    HttpStatus.BAD_REQUEST, "type must be EXPENSE or INCOME");
         }
     }
 

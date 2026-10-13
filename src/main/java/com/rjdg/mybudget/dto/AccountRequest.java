@@ -10,5 +10,5 @@ import jakarta.validation.constraints.Pattern;
 public record AccountRequest(
                 @NotBlank @Pattern(regexp = "^[a-z0-9-]+$", message = "id must be lowercase letters, numbers, and hyphens only") String id,
                 @NotNull String name, @NotNull String bank, @NotBlank String icon, @NotBlank String color,
-                @NotNull @DecimalMin(value = "0.01") BigDecimal balance) {
+                @NotNull @DecimalMin(value = "0.00") BigDecimal balance) {
 }

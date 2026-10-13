@@ -34,7 +34,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<Category> createCategory(@RequestBody CategoryRequest request) {
+    public ResponseEntity<Category> createCategory(@Valid @RequestBody CategoryRequest request) {
         Category saved = budgetService.createCategory(request);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(saved);

@@ -27,6 +27,6 @@ deploy-backend:
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
   script:
-    - ssh ubuntu@$EC2_HOST "kubectl --kubeconfig=/home/ubuntu/.kube/config set image deployment/mybudgetapp_server backend=$CI_REGISTRY_IMAGE/mybudgetapp_server:latest"
+    - ssh ubuntu@$EC2_HOST "kubectl --kubeconfig=/home/ubuntu/.kube/config set image deployment/backend -n mybudgetapp backend=$CI_REGISTRY_IMAGE/mybudgetapp_server:latest"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'

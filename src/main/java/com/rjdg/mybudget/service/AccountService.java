@@ -35,7 +35,7 @@ public class AccountService {
         String accountId = request.id();
         if (accountRepository.findById(accountId).isPresent()) {
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Account with id '" + accountId + "' does exist");
+                    HttpStatus.CONFLICT, "An account with id '" + accountId + "' already exists");
         }
 
         Account account = new Account(accountId, request.name(), request.bank(), request.icon(), request.color(),

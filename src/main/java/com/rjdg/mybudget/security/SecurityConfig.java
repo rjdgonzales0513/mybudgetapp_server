@@ -20,6 +20,8 @@ public class SecurityConfig {
                 }) // enable CORS
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/**").permitAll() // allow login
+                        // Spring forwards errors to /error; without this every 4xx/5xx becomes a 403
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated());
 
         return http.build();
